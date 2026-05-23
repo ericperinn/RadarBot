@@ -1,7 +1,13 @@
+import { buildContainer } from '@infrastructure/composition-root';
 import { loadEnv } from '@infrastructure/config/env';
+import { registerSlashCommands } from '@infrastructure/discord/register-commands';
+import {
+  disconnectPrisma,
+  getPrismaClient,
+} from '@infrastructure/persistence/prisma/prisma-client';
 import { createLogger } from '@shared/logger/logger';
 
-function bootstrap(): void {
+async function bootstrap(): Promise<void> {
   const env = loadEnv();
   const logger = createLogger(env.logLevel);
 
@@ -10,17 +16,39 @@ function bootstrap(): void {
     hasDevGuild: env.discord.devGuildId !== null,
     providers: {
       apiSports: env.providers.apiSportsKey !== null,
-      hltv: env.providers.hltvApiKey !== null,
+      hltv: true,
     },
   });
 
-  logger.info('Foundation ready. Awaiting next phase.');
+  const prisma = getPrismaClient();
+  const container = buildContainer(env, prisma, logger);
+
+  await registerSlashCommands(
+    {
+      token: env.discord.token,
+      clientId: env.discord.clientId,
+      devGuildId: env.discord.devGuildId,
+      commands: container.commands,
+    },
+    logger,
+  );
+
+  await container.bot.start({ token: env.discord.token });
+
+  const shutdown = (signal: NodeJS.Signals): void => {
+    logger.info('Shutting down', { signal });
+    void (async (): Promise<void> => {
+      await container.bot.stop().catch(() => undefined);
+      await disconnectPrisma().catch(() => undefined);
+      process.exit(0);
+    })();
+  };
+  process.on('SIGINT', shutdown);
+  process.on('SIGTERM', shutdown);
 }
 
-try {
-  bootstrap();
-} catch (error: unknown) {
+bootstrap().catch((error: unknown) => {
   const message = error instanceof Error ? error.message : String(error);
   console.error(JSON.stringify({ level: 'error', msg: 'Bootstrap failed', error: message }));
   process.exit(1);
-}
+});
