@@ -1,0 +1,63 @@
+// RadarBot — Prisma schema (SQLite)
+// Sport is stored as String (SQLite does not support native enums).
+// Validation happens at the domain boundary via the Sport value-object guard.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int            @id @default(autoincrement())
+  discordId     String         @unique
+  createdAt     DateTime       @default(now())
+
+  sports        UserSport[]
+  subscriptions Subscription[]
+}
+
+model UserSport {
+  userId    Int
+  sport     String
+  enabledAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, sport])
+  @@index([sport])
+}
+
+model Team {
+  id            Int            @id @default(autoincrement())
+  sport         String
+  externalId    String
+  name          String
+  logoUrl       String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  subscriptions Subscription[]
+
+  @@unique([sport, externalId])
+  @@index([sport, name])
+}
+
+model Subscription {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  teamId    Int
+  guildId   String
+  channelId String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, teamId, guildId])
+  @@index([teamId])
+  @@index([guildId])
+}
