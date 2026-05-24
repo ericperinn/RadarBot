@@ -1,4 +1,8 @@
-import type { ISportsProvider, ProviderTeam } from '@application/ports/sports-provider';
+import type {
+  ISportsProvider,
+  ProviderMatch,
+  ProviderTeam,
+} from '@application/ports/sports-provider';
 import type { Sport } from '@domain/value-objects/sport';
 
 import { InMemoryTtlCache } from './in-memory-ttl-cache';
@@ -30,6 +34,20 @@ export class CachedSportsProvider implements ISportsProvider {
 
   public findTeamByExternalId(externalId: string): Promise<ProviderTeam | null> {
     return this.inner.findTeamByExternalId(externalId);
+  }
+
+  public getUpcomingMatches(
+    teamExternalId: string,
+    withinMs: number,
+  ): Promise<readonly ProviderMatch[]> {
+    return this.inner.getUpcomingMatches(teamExternalId, withinMs);
+  }
+
+  public getFinishedMatches(
+    teamExternalId: string,
+    since: Date,
+  ): Promise<readonly ProviderMatch[]> {
+    return this.inner.getFinishedMatches(teamExternalId, since);
   }
 
   private buildKey(query: string, limit: number | undefined): string {

@@ -34,10 +34,12 @@ async function bootstrap(): Promise<void> {
   );
 
   await container.bot.start({ token: env.discord.token });
+  container.scheduler.start();
 
   const shutdown = (signal: NodeJS.Signals): void => {
     logger.info('Shutting down', { signal });
     void (async (): Promise<void> => {
+      container.scheduler.stop();
       await container.bot.stop().catch(() => undefined);
       await disconnectPrisma().catch(() => undefined);
       process.exit(0);

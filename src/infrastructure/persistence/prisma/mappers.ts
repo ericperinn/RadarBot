@@ -1,10 +1,12 @@
 import type {
+  NotificationSent as PrismaNotificationSent,
   Subscription as PrismaSubscription,
   Team as PrismaTeam,
   User as PrismaUser,
   UserSport as PrismaUserSport,
 } from '@prisma/client';
 
+import { assertNotificationKind, type NotificationSent } from '@domain/entities/notification-sent';
 import type { Subscription } from '@domain/entities/subscription';
 import type { Team } from '@domain/entities/team';
 import type { User } from '@domain/entities/user';
@@ -39,6 +41,16 @@ export function toTeam(row: PrismaTeam): Team {
   };
 }
 
+export function toNotificationSent(row: PrismaNotificationSent): NotificationSent {
+  return {
+    id: row.id,
+    subscriptionId: row.subscriptionId,
+    externalMatchId: row.externalMatchId,
+    kind: assertNotificationKind(row.kind),
+    sentAt: row.sentAt,
+  };
+}
+
 export function toSubscription(row: PrismaSubscription): Subscription {
   return {
     id: row.id,
@@ -46,6 +58,7 @@ export function toSubscription(row: PrismaSubscription): Subscription {
     teamId: row.teamId,
     guildId: row.guildId,
     channelId: row.channelId,
+    active: row.active,
     createdAt: row.createdAt,
   };
 }

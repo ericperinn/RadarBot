@@ -42,4 +42,13 @@ export class PrismaSubscriptionRepository implements ISubscriptionRepository {
     });
     return row !== null;
   }
+
+  public async listActive(): Promise<readonly Subscription[]> {
+    const rows = await this.prisma.subscription.findMany({ where: { active: true } });
+    return rows.map(toSubscription);
+  }
+
+  public async deactivate(id: number): Promise<void> {
+    await this.prisma.subscription.update({ where: { id }, data: { active: false } });
+  }
 }

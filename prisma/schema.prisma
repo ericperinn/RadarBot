@@ -52,12 +52,29 @@ model Subscription {
   teamId    Int
   guildId   String
   channelId String
+  active    Boolean  @default(true)
   createdAt DateTime @default(now())
 
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
+  notifications NotificationSent[]
+
   @@unique([userId, teamId, guildId])
   @@index([teamId])
   @@index([guildId])
+  @@index([active])
+}
+
+model NotificationSent {
+  id              Int      @id @default(autoincrement())
+  subscriptionId  Int
+  externalMatchId String
+  kind            String
+  sentAt          DateTime @default(now())
+
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@unique([subscriptionId, externalMatchId, kind])
+  @@index([sentAt])
 }

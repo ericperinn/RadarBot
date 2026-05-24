@@ -4,5 +4,6 @@ export interface Subscription {
   readonly teamId: number;
   readonly guildId: string;
   readonly channelId: string;
+  readonly active: boolean;
   readonly createdAt: Date;
 }

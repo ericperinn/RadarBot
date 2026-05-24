@@ -7,6 +7,27 @@ export interface ProviderTeam {
   readonly logoUrl: string | null;
 }
 
+export type MatchStatus = 'scheduled' | 'live' | 'finished';
+
+export interface ProviderMatchOpponent {
+  readonly name: string;
+  readonly logoUrl: string | null;
+}
+
+export interface ProviderMatch {
+  readonly externalId: string;
+  readonly status: MatchStatus;
+  readonly scheduledAt: Date;
+  readonly finishedAt: Date | null;
+  readonly opponent: ProviderMatchOpponent;
+  /** Score of the followed team. */
+  readonly scoreSelf: number | null;
+  /** Score of the opponent. */
+  readonly scoreOpponent: number | null;
+  /** Tournament/league name when available (e.g. "ESL Pro League", "Brasileirão Série A"). */
+  readonly competition: string | null;
+}
+
 export interface ISportsProvider {
   readonly sport: Sport;
 
@@ -18,4 +39,10 @@ export interface ISportsProvider {
 
   /** Resolves a team by the provider's external id. Returns null when not found. */
   findTeamByExternalId(externalId: string): Promise<ProviderTeam | null>;
+
+  /** Upcoming matches for the given team within `withinMs` from now. */
+  getUpcomingMatches(teamExternalId: string, withinMs: number): Promise<readonly ProviderMatch[]>;
+
+  /** Matches that finished after `since` (exclusive). */
+  getFinishedMatches(teamExternalId: string, since: Date): Promise<readonly ProviderMatch[]>;
 }

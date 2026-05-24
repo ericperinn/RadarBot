@@ -9,7 +9,8 @@ export interface DiscordBotOptions {
 }
 
 export class DiscordBot {
-  private readonly client: Client;
+  public readonly client: Client;
+  private readonly readyPromise: Promise<void>;
 
   public constructor(
     private readonly dispatcher: InteractionDispatcher,
@@ -17,8 +18,11 @@ export class DiscordBot {
   ) {
     this.client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
-    this.client.once(Events.ClientReady, (ready) => {
-      this.logger.info('Discord client ready', { tag: ready.user.tag });
+    this.readyPromise = new Promise<void>((resolve) => {
+      this.client.once(Events.ClientReady, (ready) => {
+        this.logger.info('Discord client ready', { tag: ready.user.tag });
+        resolve();
+      });
     });
 
     this.client.on(Events.InteractionCreate, (interaction) => {
@@ -32,6 +36,7 @@ export class DiscordBot {
 
   public async start(options: DiscordBotOptions): Promise<void> {
     await this.client.login(options.token);
+    await this.readyPromise;
   }
 
   public async stop(): Promise<void> {
