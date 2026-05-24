@@ -79,19 +79,19 @@ export class InteractionDispatcher {
   private describeError(error: unknown): { title: string; description: string } {
     if (error instanceof ProviderRateLimitError) {
       return {
-        title: 'Limite de requisições atingido',
-        description: 'O provedor externo está pedindo para aguardar. Tente novamente em instantes.',
+        title: 'Rate limit reached',
+        description: 'The external provider is rate-limiting requests. Please try again in a moment.',
       };
     }
     if (error instanceof ProviderError) {
-      return { title: 'Falha ao consultar provedor', description: error.message };
+      return { title: 'Provider error', description: error.message };
     }
     if (error instanceof DomainError) {
-      return { title: 'Operação inválida', description: error.message };
+      return { title: 'Invalid operation', description: error.message };
     }
     return {
-      title: 'Erro inesperado',
-      description: 'Algo deu errado processando seu comando.',
+      title: 'Unexpected error',
+      description: 'Something went wrong while processing your command.',
     };
   }
 }

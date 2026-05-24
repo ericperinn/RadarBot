@@ -24,15 +24,15 @@ const AUTOCOMPLETE_LIMIT = 25;
 export class FollowCommand implements Command {
   public readonly data = new SlashCommandBuilder()
     .setName('follow')
-    .setDescription('Seguir um time para receber notificações de partidas.')
+    .setDescription('Follow a team to receive match notifications.')
     .addSubcommand((sub) =>
       sub
         .setName('cs2')
-        .setDescription('Seguir um time de CS2')
+        .setDescription('Follow a CS2 team')
         .addStringOption((opt) =>
           opt
             .setName(TEAM_OPTION)
-            .setDescription('Nome do time')
+            .setDescription('Team name')
             .setRequired(true)
             .setAutocomplete(true),
         ),
@@ -40,11 +40,11 @@ export class FollowCommand implements Command {
     .addSubcommand((sub) =>
       sub
         .setName('football')
-        .setDescription('Seguir um time de futebol')
+        .setDescription('Follow a football team')
         .addStringOption((opt) =>
           opt
             .setName(TEAM_OPTION)
-            .setDescription('Nome do time')
+            .setDescription('Team name')
             .setRequired(true)
             .setAutocomplete(true),
         ),
@@ -81,8 +81,8 @@ export class FollowCommand implements Command {
       await interaction.reply({
         embeds: [
           errorEmbed({
-            title: 'Comando disponível apenas em servidores',
-            description: 'Use `/follow` dentro de um servidor para receber alertas no canal.',
+            title: 'Server-only command',
+            description: 'Use `/follow` inside a server to receive alerts in a channel.',
           }),
         ],
         flags: MessageFlags.Ephemeral,
@@ -94,7 +94,7 @@ export class FollowCommand implements Command {
     const sport = SUBCOMMAND_TO_SPORT[subcommand];
     if (sport === undefined) {
       await interaction.reply({
-        embeds: [errorEmbed({ title: 'Esporte desconhecido', description: subcommand })],
+        embeds: [errorEmbed({ title: 'Unknown sport', description: subcommand })],
         flags: MessageFlags.Ephemeral,
       });
       return;
@@ -114,13 +114,13 @@ export class FollowCommand implements Command {
 
     const embed = result.alreadyFollowed
       ? infoEmbed({
-          title: 'Você já segue este time',
-          description: `**${result.team.name}** já estava na sua lista neste servidor.`,
+          title: 'Already following',
+          description: `**${result.team.name}** is already in your list for this server.`,
           thumbnailUrl: result.team.logoUrl,
         })
       : successEmbed({
-          title: 'Time adicionado',
-          description: `Você agora segue **${result.team.name}**. Notificações chegarão neste canal.`,
+          title: 'Team added',
+          description: `You are now following **${result.team.name}**. Notifications will be sent to this channel.`,
           thumbnailUrl: result.team.logoUrl,
         });
 

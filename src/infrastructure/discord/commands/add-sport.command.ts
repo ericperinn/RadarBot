@@ -8,17 +8,17 @@ import type { Command } from './command';
 
 const SPORT_LABELS: Readonly<Record<(typeof SPORTS)[number], string>> = {
   CS2: 'CS2 (HLTV)',
-  FOOTBALL: 'Futebol (API-Sports)',
+  FOOTBALL: 'Football (API-Sports)',
 };
 
 export class AddSportCommand implements Command {
   public readonly data = new SlashCommandBuilder()
     .setName('add_sport')
-    .setDescription('Habilita um ecossistema esportivo para você seguir times.')
+    .setDescription('Enables a sport so you can follow teams and receive match notifications.')
     .addStringOption((opt) =>
       opt
         .setName('sport')
-        .setDescription('Escolha o esporte que deseja habilitar')
+        .setDescription('Sport to enable')
         .setRequired(true)
         .addChoices(...SPORTS.map((sport) => ({ name: SPORT_LABELS[sport], value: sport }))),
     );
@@ -36,12 +36,12 @@ export class AddSportCommand implements Command {
 
     const embed = result.alreadyEnabled
       ? infoEmbed({
-          title: 'Esporte já estava habilitado',
-          description: `${SPORT_LABELS[sport]} já constava nas suas preferências.`,
+          title: 'Sport already enabled',
+          description: `${SPORT_LABELS[sport]} was already in your preferences.`,
         })
       : successEmbed({
-          title: 'Esporte habilitado',
-          description: `Você agora pode usar \`/follow\` para acompanhar times de **${SPORT_LABELS[sport]}**.`,
+          title: 'Sport enabled',
+          description: `You can now use \`/follow\` to track **${SPORT_LABELS[sport]}** teams.`,
         });
 
     await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });

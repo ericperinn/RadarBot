@@ -7,13 +7,13 @@ import type { Command } from './command';
 
 const SPORT_DISPLAY: Readonly<Record<string, string>> = {
   CS2: 'CS2',
-  FOOTBALL: 'Futebol',
+  FOOTBALL: 'Football',
 };
 
 export class MyTeamsCommand implements Command {
   public readonly data = new SlashCommandBuilder()
     .setName('my_teams')
-    .setDescription('Lista os times que você está seguindo neste servidor.');
+    .setDescription('Lists the teams you are following in this server.');
 
   public constructor(private readonly listMyTeams: ListMyTeamsUseCase) {}
 
@@ -27,8 +27,8 @@ export class MyTeamsCommand implements Command {
       await interaction.reply({
         embeds: [
           infoEmbed({
-            title: 'Nenhum time encontrado',
-            description: 'Use `/follow` para começar a acompanhar times.',
+            title: 'No teams found',
+            description: 'Use `/follow` to start following teams.',
           }),
         ],
         flags: MessageFlags.Ephemeral,
@@ -43,7 +43,7 @@ export class MyTeamsCommand implements Command {
     await interaction.reply({
       embeds: [
         infoEmbed({
-          title: `Seus times (${followed.length.toString()})`,
+          title: `Your teams (${followed.length.toString()})`,
           description: lines.join('\n'),
         }),
       ],

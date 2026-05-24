@@ -13,7 +13,7 @@ export function upcomingMatchEmbed(team: Team, match: ProviderMatch): EmbedBuild
     `🕒 <t:${unixSeconds}:F> — <t:${unixSeconds}:R>`,
   ].join('\n');
   return matchEmbed({
-    title: 'Próxima partida',
+    title: 'Upcoming match',
     description,
     thumbnailUrl: team.logoUrl,
   });
@@ -29,7 +29,7 @@ export function finishedMatchEmbed(team: Team, match: ProviderMatch): EmbedBuild
     '\n',
   );
   return matchEmbed({
-    title: 'Resultado da partida',
+    title: 'Match result',
     description,
     thumbnailUrl: team.logoUrl,
   });
