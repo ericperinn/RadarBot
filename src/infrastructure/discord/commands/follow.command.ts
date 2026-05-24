@@ -70,7 +70,10 @@ export class FollowCommand implements Command {
     const teams = await provider.searchTeams(focused.value, AUTOCOMPLETE_LIMIT);
     await interaction.respond(
       teams.map((t) => ({
-        name: truncate(t.name, 100),
+        name: truncate(
+          t.country !== null && t.country !== undefined ? `${t.name} (${t.country})` : t.name,
+          100,
+        ),
         value: t.externalId,
       })),
     );

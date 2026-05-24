@@ -5,6 +5,8 @@ export interface ProviderTeam {
   readonly externalId: string;
   readonly name: string;
   readonly logoUrl: string | null;
+  /** Country/region label used only for autocomplete disambiguation — not stored in the DB. */
+  readonly country?: string | null;
 }
 
 export type MatchStatus = 'scheduled' | 'live' | 'finished';

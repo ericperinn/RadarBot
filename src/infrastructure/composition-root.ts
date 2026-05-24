@@ -6,12 +6,14 @@ import { CheckFinishedMatchesUseCase } from '@application/use-cases/check-finish
 import { CheckUpcomingMatchesUseCase } from '@application/use-cases/check-upcoming-matches.use-case';
 import { FollowTeamUseCase } from '@application/use-cases/follow-team.use-case';
 import { ListMyTeamsUseCase } from '@application/use-cases/list-my-teams.use-case';
+import { UnfollowTeamUseCase } from '@application/use-cases/unfollow-team.use-case';
 
 import type { AppEnv } from '@infrastructure/config/env';
 import { AddSportCommand } from '@infrastructure/discord/commands/add-sport.command';
 import type { Command } from '@infrastructure/discord/commands/command';
 import { FollowCommand } from '@infrastructure/discord/commands/follow.command';
 import { MyTeamsCommand } from '@infrastructure/discord/commands/my-teams.command';
+import { UnfollowCommand } from '@infrastructure/discord/commands/unfollow.command';
 import { DiscordBot } from '@infrastructure/discord/discord-bot';
 import { InteractionDispatcher } from '@infrastructure/discord/events/interaction-dispatcher';
 import { NotificationDispatcher } from '@infrastructure/discord/notification-dispatcher';
@@ -62,6 +64,7 @@ export function buildContainer(env: AppEnv, prisma: PrismaClient, logger: Logger
   const addSport = new AddSportUseCase(users, userSports);
   const followTeam = new FollowTeamUseCase(users, userSports, teams, subscriptions, providers);
   const listMyTeams = new ListMyTeamsUseCase(users, subscriptions, teams);
+  const unfollowTeam = new UnfollowTeamUseCase(users, subscriptions, teams);
 
   // Background use cases
   const checkUpcoming = new CheckUpcomingMatchesUseCase(
@@ -83,6 +86,7 @@ export function buildContainer(env: AppEnv, prisma: PrismaClient, logger: Logger
   const commands: readonly Command[] = [
     new AddSportCommand(addSport),
     new FollowCommand(followTeam, providers),
+    new UnfollowCommand(unfollowTeam, listMyTeams),
     new MyTeamsCommand(listMyTeams),
   ];
 

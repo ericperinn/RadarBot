@@ -29,9 +29,7 @@ export class HltvProvider implements ISportsProvider {
   private readonly rankingCache = new InMemoryTtlCache<string, readonly ProviderTeam[]>(
     RANKING_TTL_MS,
   );
-  private readonly teamLookupCache = new InMemoryTtlCache<string, ProviderTeam>(
-    TEAM_LOOKUP_TTL_MS,
-  );
+  private readonly teamLookupCache = new InMemoryTtlCache<string, ProviderTeam>(TEAM_LOOKUP_TTL_MS);
 
   public async searchTeams(
     query: string,

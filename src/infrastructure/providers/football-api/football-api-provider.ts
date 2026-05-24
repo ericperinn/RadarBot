@@ -19,6 +19,7 @@ interface ApiSportsTeamRow {
     readonly id: number;
     readonly name: string;
     readonly logo: string | null;
+    readonly country: string | null;
   };
 }
 
@@ -98,6 +99,7 @@ export class FootballApiProvider implements ISportsProvider {
       externalId: row.team.id.toString(),
       name: row.team.name,
       logoUrl: row.team.logo,
+      country: row.team.country,
     }));
   }
 
@@ -126,6 +128,7 @@ export class FootballApiProvider implements ISportsProvider {
       externalId: row.team.id.toString(),
       name: row.team.name,
       logoUrl: row.team.logo,
+      country: row.team.country,
     };
   }
 

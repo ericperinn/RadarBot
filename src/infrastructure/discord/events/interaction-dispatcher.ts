@@ -80,7 +80,8 @@ export class InteractionDispatcher {
     if (error instanceof ProviderRateLimitError) {
       return {
         title: 'Rate limit reached',
-        description: 'The external provider is rate-limiting requests. Please try again in a moment.',
+        description:
+          'The external provider is rate-limiting requests. Please try again in a moment.',
       };
     }
     if (error instanceof ProviderError) {
